@@ -18,9 +18,6 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 - **CVE-2025-53770** — variant related to 49704 (fuzzing-derived)  
 - **CVE-2025-53771** — variant related to 49706
 
-> Together, these elevated the risk of unauthenticated compromise on exposed SharePoint instances. (Links to vendor/NVD advisories in **[[#References]]**.)
-
-**Assumptions:** Evidence is from a lab/controlled replication. Sensitive paths and network indicators are redacted; no runnable exploit code is provided.
 
 ---
 
@@ -105,6 +102,7 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 - Constrain PowerShell on servers (Constrained Language Mode, script block logging)
 - Web publishing best practices: WAF rules, request filtering, and disable legacy endpoints
 
+
 ---
 
 ## 6) Timeline
@@ -123,6 +121,7 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 - **Network**: `hxxp://<redacted_domain_or_ip>:10888/...` (HTTP POSTs)  
 - **Files**: `SPlog.exe`, `log.dll`, `Product.Wsc.dll`, `nvsmartmax64.dll`, `txmlutil.dll` (filenames only; treat as contextual)
 
+
 ---
 
 ## References
@@ -140,6 +139,7 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 ## Appendix A — Decoded Strings
 
 ![](attachments/POC-Decoded-Strings.png)
+
 
 ---
 
