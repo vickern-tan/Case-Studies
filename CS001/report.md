@@ -89,6 +89,10 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 
 **Immediate**
 - Quarantine or EDR isolate the affected host (maintenance window permitting)
+- Reset all user credentials
+- Run a full security scan and remove all the malicious files (.dll, .exe and .aspx)
+- Renew SharePoint Server machine keys
+- Renew IIS on host server after key renewal
 - Block egress to suspicious domains/IPs; capture full PCAP if available
 - Snapshot volatile data (process list, net connections, open handles), then acquire triage image
 
@@ -107,11 +111,10 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 
 ## 6) Timeline (example)
 
-- **2025-07-xx** — Suspicious telemetry detected (XDR)  
-- **2025-07-xx** — Lab replication & artifact review  
+- **2025-07-22** — Suspicious telemetry detected (XDR)  
+- **2025-07-24** — Lab replication & artifact review  
 - **2025-07-xx** — Mitigations applied; indicators shared with SecOps
 
-*(Replace “xx” with your actual dates as disclosure allows.)*
 
 ---
 
