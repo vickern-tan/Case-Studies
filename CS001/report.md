@@ -5,7 +5,7 @@
 **Status:** Analyzed (July 2025)  
 **Severity:** High (post-exploitation behaviors observed)  
 **Surface:** SharePoint on IIS (`w3wp.exe`)  
-**Framework:** MITRE ATT&CK (primary: **T1190** – Exploit Public-Facing Application, with downstream techniques below)
+**Framework:** MITRE ATT&CK
 
 ---
 
@@ -43,7 +43,7 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 
 ---
 
-## 3) ATT&CK Mapping
+## 3) ATT&CK Mapping (High-level)
 
 - **Initial Access**: T1190 Exploit Public-Facing App (SharePoint)  
 - **Execution**: T1059.001 PowerShell; T1059 Cmd  
@@ -53,7 +53,6 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 - **Persistence**: T1505.003 Server-Side Component (ASPX web shell in LAYOUTS)  
 - **C2**: T1071.001 Web Protocols (HTTP POST to external host)
 
-*(Exact sub-techniques depend on environment; mapping kept intentionally high-level.)*
 
 ---
 
@@ -81,7 +80,6 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 **E. Staged binaries under service profiles**  
 - New EXE/DLL in `AppData\Local\` or `ProgramData\` tied to recent `w3wp.exe` activity
 
-> **Tip:** Combine A+B+C as a chained analytic for higher precision.
 
 ---
 
@@ -139,7 +137,7 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 
 ---
 
-## Appendix A — Decoded Strings (sanitized)
+## Appendix A — Decoded Strings
 *PowerShell `-EncodedCommand` contents summarized; raw strings withheld to prevent abuse.*
 
 ![](attachments/POC-Decoded-Strings.png)

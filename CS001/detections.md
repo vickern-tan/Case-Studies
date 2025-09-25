@@ -1,33 +1,167 @@
-
-## Indicators of Compromise (IOCs)
-
-> Suspicious activity consistent with potential exploitation of a SharePoint vulnerability was observed on a SharePoint host. Multiple alerts reported unusual DLL and ASPX files being deployed within the SharePoint web directory, indicating possible remote code execution (RCE).
-
-| Type         | Value / Pattern                                                                                                                                                                                                                                                                                                                                                                                                                                                               | Notes / Context                                                                                                                                                                                            |
-| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| IP Addresses | - `96.9.125[.]147`<br>- `107.191.58[.]76`<br>- `104.238.159[.]149` <br>- `139.59.11[.]66`<br>- `154.223.19[.]106`<br>- `103.151.172[.]92`<br>- `45.191.66[.]77`<br>- `83.136.182[.]237`<br>- `162.248.74[.]92`<br>- `38.54.106[.]11`<br>- `206.166.251[.]228`<br>- `45.77.155[.]170`<br>- `64.176.50[.]109`<br>- `149.28.17[.]188`<br>- `173.239.247[.]32`<br>- `109.105.193[.]76`<br>- `2.56.190[.]139`<br>- `141.164.60[.]10`<br>- `124.56.42[.]75`<br>- `103.186.30[.]186` | A vulnerable endpoint was exploited via crafted POST requests with a forged ViewState payload to bypass authentication, enable remote code execution, install a webshell, and establish persistent access. |
-| Domain       | `trryuphx.requestrepo[.]com`                                                                                                                                                                                                                                                                                                                                                                                                                                                  | Used for **HTTP POST exfil** (`whoami /all`, `dir`, `appcmd`, etc.).                                                                                                                                       |
-| Domain       | `mpf1oyds.requestrepo[.]com`                                                                                                                                                                                                                                                                                                                                                                                                                                                  | Used for **HTTP POST exfil** and directory listings.                                                                                                                                                       |
-| Domain       | `cdn-chromos.s3.amazonaws[.]com/dWrJQTINu3`                                                                                                                                                                                                                                                                                                                                                                                                                                   | Plain-HTTP **binary delivery** to `C:\Users\Public\Downloads\1.exe`.                                                                                                                                       |
-| URL          | `hxxp://[C2_IP]:10888/asx` / `/asd` / `/1`–`/4`                                                                                                                                                                                                                                                                                                                                                                                                                               | Payload endpoints; some saved as EXE/DLL in `AppData\Local\...`.                                                                                                                                           |
-| File Path    | `C:\Users\[SERVICE_ACCOUNT]\AppData\Local\SPDesk.exe`                                                                                                                                                                                                                                                                                                                                                                                                                         | Downloaded executable.                                                                                                                                                                                     |
-| File Path    | `C:\Users\[SERVICE_ACCOUNT]\AppData\Local\SPlog.exe`                                                                                                                                                                                                                                                                                                                                                                                                                          | Downloaded executable.                                                                                                                                                                                     |
-| File Path    | `C:\Users\[SERVICE_ACCOUNT]\AppData\Local\log.dll`                                                                                                                                                                                                                                                                                                                                                                                                                            | Downloaded DLL.                                                                                                                                                                                            |
-| File Path    | `C:\Users\[SERVICE_ACCOUNT]\AppData\Local\Product.Wsc.dll`                                                                                                                                                                                                                                                                                                                                                                                                                    | Downloaded DLL.                                                                                                                                                                                            |
-| File Path    | `C:\Users\[SERVICE_ACCOUNT]\AppData\Local\nvsmartmax64.dll`                                                                                                                                                                                                                                                                                                                                                                                                                   | Downloaded DLL.                                                                                                                                                                                            |
-| File Path    | `C:\Users\[SERVICE_ACCOUNT]\AppData\Local\txmlutil.dll`                                                                                                                                                                                                                                                                                                                                                                                                                       | Downloaded DLL.                                                                                                                                                                                            |
-| File Path    | `C:\ProgramData\defender.log`                                                                                                                                                                                                                                                                                                                                                                                                                                                 | Read and exfiltrated via HTTP POST.                                                                                                                                                                        |
-| File Path    | `C:\inetpub\wwwroot\wss\VirtualDirectories\80\App_GlobalResources\0.css`                                                                                                                                                                                                                                                                                                                                                                                                      | File-write via `cmd.exe` echo; used to verify write permissions.                                                                                                                                           |
-| File Path    | `C:\PROGRA~1\COMMON~1\MICROS~1\WEBSER~1\16\TEMPLATE\LAYOUTS\spinstall0.aspx`                                                                                                                                                                                                                                                                                                                                                                                                  | **Web shell** path written by decoded `-EncodedCommand`.                                                                                                                                                   |
-| Process      | `w3wp.exe → powershell.exe` / `cmd.exe`                                                                                                                                                                                                                                                                                                                                                                                                                                       | IIS worker spawning PowerShell/Command Prompt.                                                                                                                                                             |
-| Technique    | `PowerShell -EncodedCommand`                                                                                                                                                                                                                                                                                                                                                                                                                                                  | Base64-encoded payload writes ASPX into SharePoint LAYOUTS.                                                                                                                                                |
+# Detections — SharePoint “ToolShell”
 
 
+---
 
-## File Hashes (SHA256)
+## Data Sources
+- **Microsoft Defender for Endpoint (Advanced Hunting)** — KQL
+- **Stellar Cyber** — ATH rule (builder or YAML-like sketch)
 
-| File Name                                | SHA256                                                             | Notes / Context                      |
-|------------------------------------------|--------------------------------------------------------------------|--------------------------------------|
-| `.1.avdtwnuschaqsaccnjdxsukiwoqbufpc.__relocated__.exe` | 929e3fdd3068057632b52ecdfd575ab389390c852b2f4e65dc32f20c87521600 | Dropped executable (suspicious)       |
-| `nvsmartmax64.dll`                        | 459fc1c142917700a720745d5d99f23d47a60a3c0034dfa405dc9d0061be4519 | Malicious DLL placed in AppData       |
-| `1.exe`                                   | 4214016a64f6442c08e9c866c57de1a2ca194c59a74c8c677d1308561df40bd1 | Downloaded binary via S3/CDN endpoint |
+---
+
+## 1) KQL — ASPX drop into SharePoint LAYOUTS
+**Goal:** catch suspicious writes of ASPX files to the global LAYOUTS path (common web‑shell landing spot).
+
+```kusto
+// On‑prem SharePoint servers (adjust 14/15/16 version in path for your farm)
+DeviceFileEvents
+| where FolderPath matches regex @"Web Server Extensions\\\d+\\TEMPLATE\\LAYOUTS"
+| where FileName endswith ".aspx"
+| where ActionType in~ ("FileCreated","FileModified","FileRenamed")
+| project Timestamp, DeviceName, AccountName,
+          InitiatingProcessFileName, InitiatingProcessCommandLine,
+          FileName, FolderPath, ActionType, SHA256
+| order by Timestamp desc
+```
+
+
+---
+
+## 2) KQL — IIS spawning PowerShell/CMD (encoded commands)
+**Goal:** unusual **`w3wp.exe` → `powershell.exe`/`cmd.exe`** chains with `-EncodedCommand` usage.
+
+```kusto
+DeviceProcessEvents
+| where InitiatingProcessFileName =~ "w3wp.exe"
+| where FileName in~ ("powershell.exe","pwsh.exe","cmd.exe")
+| extend Encoded = iif(CommandLine has "-EncodedCommand" or CommandLine has "-enc", true, false)
+| project Timestamp, DeviceName, AccountName,
+          Parent=InitiatingProcessFileName, FileName, CommandLine, Encoded,
+          InitiatingProcessCommandLine
+| order by Timestamp desc
+```
+
+
+---
+
+## 3) (Optional) KQL — clear‑text egress to suspicious infra
+**Goal:** flag outbound HTTP from SharePoint/IIS hosts to known‑bad infrastructure.
+
+```kusto
+let watchHosts = dynamic(["trryuphx.requestrepo.com","mpf1oyds.requestrepo.com"]);  // add exact subdomains
+let watchPorts = dynamic([10888]);
+DeviceNetworkEvents
+| where (RemoteUrl has_any (watchHosts)) or (RemotePort in (watchPorts))
+| where InitiatingProcessFileName in~ ("w3wp.exe","powershell.exe","cmd.exe")
+| project Timestamp, DeviceName, RemoteUrl, RemoteIP, RemotePort,
+          InitiatingProcessFileName, InitiatingProcessCommandLine
+| order by Timestamp desc
+```
+
+
+---
+
+## 4) Stellar Cyber (ATH) — two simple rules
+
+### 4.1 ToolPane POST + page mutation 
+```yaml
+name: SharePoint ToolPane POST + Page Mutation (ToolShell)
+when:
+  and:
+    - http.request.method == "POST"
+    - url contains "ToolPane.aspx"
+  and:
+    - eventSource == "SharePoint"
+    - azure_all_properties.ActionType in
+        ["FileModified","FileDeleted","FileRenamed","PageModified","WebPartModified"]
+    - azure_all_properties.FileName contains_any
+        ["/_layouts/15/ToolPane.aspx","DisplayMode=Edit","/_layouts/SignOut.aspx"]
+    - azure_all_properties.UriDomain contains "ToolPane.aspx"
+    - azure_all_properties.InitiatingPSeverity not in ["Low","Info"]
+group_by: [client.ip, user, url]
+threshold:
+  count >= 3 within 10m
+severity: high
+notes: >
+  Correlate with w3wp→powershell/cmd and LAYOUTS ASPX writes to reduce FPs.
+```
+
+### 4.2 LAYOUTS ASPX write on SharePoint host
+```yaml
+name: SharePoint LAYOUTS ASPX Write
+when:
+  and:
+    - eventSource in ["EDR","Defender","Sysmon"]   # adjust to your source naming
+    - file.path contains "Web Server Extensions"
+    - file.path contains "TEMPLATE\LAYOUTS"
+    - file.name endswith ".aspx"
+    - file.action in ["FileCreated","FileModified","FileRenamed"]
+group_by: [host.name, file.path, file.name]
+threshold:
+  count >= 1 within 15m
+severity: critical
+notes: >
+  High signal on server roles. Add allowlists for admin deployments/build agents.
+```
+
+---
+
+## 5) Screenshot
+
+![](attachments/stellar-cyber-ath-rule.png)
+*Figure — ATH rule builder targeting POST + ToolPane and SharePoint edit ops.*
+
+
+---
+
+## 6) IOCs
+
+### Network
+- **Domains**
+  - `trryuphx.requestrepo[.]com`
+  - `mpf1oyds.requestrepo[.]com`
+  - `cdn-chromos.s3.amazonaws[.]com`
+- **Ports/URLs**
+  - Small HTTP service on **`:10888`** (paths like `/asx`, `/asd`, `/1` … `/4`)
+- **IPs**
+- `96.9.125[.]147`
+- `107.191.58[.]76`
+- `104.238.159[.]149` 
+- `139.59.11[.]66`
+- `154.223.19[.]106`
+- `103.151.172[.]92`
+- `45.191.66[.]77`
+- `83.136.182[.]237`
+- `162.248.74[.]92`
+- `38.54.106[.]11`
+- `206.166.251[.]228`
+- `45.77.155[.]170`
+- `64.176.50[.]109`
+- `149.28.17[.]188`
+- `173.239.247[.]32`
+- `109.105.193[.]76`
+- `2.56.190[.]139`
+- `141.164.60[.]10`
+- `124.56.42[.]75`
+- `103.186.30[.]186`
+
+### File Paths (Windows)
+- `C:\Program Files\Common Files\microsoft shared\Web Server Extensions\16\TEMPLATE\LAYOUTS\spinstall0.aspx`
+- `C:\inetpub\wwwroot\wss\VirtualDirectories\<site-id>\App_GlobalResources\0.css`
+- `C:\Users\<service>\AppData\Local\` *(staging of EXE/DLL payloads)*
+
+### Filenames (contextual)
+- `spinstall0.aspx`
+- `SPlog.exe`, `log.dll`, `Product.Wsc.dll`, `nvsmartmax64.dll`, `txmlutil.dll`, `1.exe`
+- `.1.avdtwnuschaqsaccnjdxsukiwoqbufpc.__relocated__.exe` *(suspicious relocated EXE)*
+
+### Processes / Behaviors
+- `w3wp.exe` → `powershell.exe` / `cmd.exe`
+- PowerShell with `-EncodedCommand` and decoded strings including `whoami`, `systeminfo`, `tasklist`, `netstat`, directory listings
+
+
+---
+
+## 7) Attribution
+*“KQL adapted from \<Ontinue-ATO/# Threat Briefing: CVE-2025-53770 “ToolShell” – Active SharePoint Zero Day, 2025\> ([Threat Briefing: CVE-2025-53770 “ToolShell” – Active SharePoint Zero Day | Ontinue](https://www.ontinue.com/resource/toolshell-active-sharepoint-zero-day/)). Tweaked for our env (paths/fields).”*
+
