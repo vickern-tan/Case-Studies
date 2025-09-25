@@ -11,17 +11,17 @@
 
 # Table of Contents
 
-1. [Overview](#overview)
-2. [Evidence & Observables](#evidence--observables)
-		 - [**Screenshot**](#screenshot)
-3. [ATT&CK Mapping (High-level)](#attck-mapping-high-level)
-4. [Detection Opportunities](#detection-opportunities)
-5. [Response & Remediation](#response--remediation)
-6. [Timeline](#timeline)
-7. [Indicators](#indicators)
-8. [References](#references)
-9. [Appendix A — Decoded Command](#appendix-a--decoded-command)
-10. [Ethics & Disclosure](#ethics--disclosure)
+#### 1. [Overview](#overview)
+#### 2. [Evidence & Observables](#evidence--observables)
+
+#### 3. [ATT&CK Mapping (High-level)](#attck-mapping-high-level)
+#### 4. [Detection Opportunities](#detection-opportunities)
+#### 5. [Response & Remediation](#response--remediation)
+#### 6. [Timeline](#timeline)
+#### 7. [Indicators](#indicators)
+#### 8. [References](#references)
+#### 9. [Appendix A — Decoded Command](#appendix-a--decoded-command)
+#### 10. [Ethics & Disclosure](#ethics--disclosure)
 
 
 
