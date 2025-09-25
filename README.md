@@ -25,7 +25,7 @@
 - [YYYY-MM-DD] Vendor acknowledgement / patch
 
 ## Credits & Ethics
-- Research by [VickernTan/alias].  
+- Research by @vickern-tan.  
 - This repo omits exploit code and sensitive artifacts to prevent abuse.
 
 
