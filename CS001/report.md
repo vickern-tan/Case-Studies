@@ -13,7 +13,6 @@
 
 #### 1. [Overview](#overview)
 #### 2. [Evidence & Observables](#evidence--observables)
-
 #### 3. [ATT&CK Mapping (High-level)](#attck-mapping-high-level)
 #### 4. [Detection Opportunities](#detection-opportunities)
 #### 5. [Response & Remediation](#response--remediation)
@@ -54,7 +53,8 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
   - Decoded `-EncodedCommand` writes **`spinstall0.aspx`** into SharePoint **LAYOUTS** (globally served)
   - A `0.css` drop in `App_GlobalResources\` (likely write test/marker)
 
-#### **Screenshot**
+
+#### **Screenshot: **
 ![](Attachments/POC-Decoded-Strings.png)
 
 *Figure — Decoded Command Lines*
