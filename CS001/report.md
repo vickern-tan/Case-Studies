@@ -138,7 +138,6 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 ---
 
 ## Appendix A — Decoded Strings
-*PowerShell `-EncodedCommand` contents summarized; raw strings withheld to prevent abuse.*
 
 ![](attachments/POC-Decoded-Strings.png)
 
