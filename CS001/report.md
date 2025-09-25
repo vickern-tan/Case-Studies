@@ -35,8 +35,10 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
   - Decoded `-EncodedCommand` writes **`spinstall0.aspx`** into SharePoint **LAYOUTS** (globally served)
   - A `0.css` drop in `App_GlobalResources\` (likely write test/marker)
 
-**Screenshot**
+#### **Screenshot**
 ![](Attachments/POC-Decoded-Strings.png)
+*Figure — Decoded Command Lines*
+
 
 ---
 
@@ -136,9 +138,10 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 
 ---
 
-## Appendix A — Decoded Strings
+## Appendix A — Decoded Command
 
 ![](Attachments/POC-Decoded-Strings.png)
+*Figure — Decoded Command Lines*
 
 
 ---
