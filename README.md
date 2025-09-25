@@ -1,6 +1,6 @@
 # 🛡️ Cyber Attack Case Studies
 
-Curated, research-grade write-ups of real-world cyber incidents. Each case distills what happened, how it worked (at a high level), why it mattered to the business, and how defenders can detect and respond—mapped to MITRE ATT&CK.
+Curated, research-grade write-ups of real-world cyber incidents. Each case distills what happened, how it worked (at a high level), why it mattered to the business, and how defenders can detect and respond—mapped to MITRE ATT&CK. test
 
 ## 📦 What’s Inside
 - Incident case studies
