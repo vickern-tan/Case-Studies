@@ -139,7 +139,7 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 
 ## Appendix A — Decoded Strings
 
-![](attachments/POC-Decoded-Strings.png)
+![](CS001/attachments/POC-Decoded-Strings.png)
 
 ---
 
