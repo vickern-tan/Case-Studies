@@ -11,7 +11,7 @@ Curated, research-grade write-ups of real-world cyber incidents. Each case disti
 - Timelines, diagrams, and sanitized artifacts
 
 ## 🎯 Goals
-- Provide a learning hub for students, analysts, DFIR practitioners, and researchers
-- Showcase concise, responsible, and reproducible security analysis
-- Emphasize defender value: detection logic, hypotheses, and mitigations
+- Provide a learning hub for students, analysts, DFIR practitioners, and researchers.
+- Showcase concise, responsible, and reproducible security analysis.
+- Emphasize defender value: detection logic, hypotheses, and mitigations.
 
