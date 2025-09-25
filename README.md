@@ -15,17 +15,3 @@ Curated, research-grade write-ups of real-world cyber incidents. Each case disti
 - Showcase concise, responsible, and reproducible security analysis
 - Emphasize defender value: detection logic, hypotheses, and mitigations
 
-## 🗂 Repository Layout
-/  
-├─ README.md  
-├─ LICENSE  
-├─ .gitignore
-├─ cases/  
-│ └─ <CS001>/  
-│ ├─ report.md # main write-up (sanitized, defender-centric)  
-│ ├─ timeline.md # key dates (discovery → disclosure → patch)  
-│ ├─ detections.md # hypotheses, hunting ideas, IOCs (safe)  
-│ ├─ references.md # CVE/CWE, advisories, research links  
-│ └─ attachments/ # images used in the case docs  
-│ └─ POC-Decoded-Strings.png 
-├─ index.md  
