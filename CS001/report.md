@@ -37,6 +37,7 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 
 #### **Screenshot**
 ![](Attachments/POC-Decoded-Strings.png)
+
 *Figure — Decoded Command Lines*
 
 
