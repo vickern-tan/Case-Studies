@@ -1,31 +1,31 @@
-# SharePoint “ToolShell” Case Study (Sanitized)
+# 🛡️ Cyber Attack Case Studies
 
-> **TL;DR**: .  
-> **Status**: Reported on [2025-07-23];
+Curated, research-grade write-ups of real-world cyber incidents. Each case distills what happened, how it worked (at a high level), why it mattered to the business, and how defenders can detect and respond—mapped to MITRE ATT&CK.
 
-## Overview
-- **Component/Surface**: [e.g., SharePoint X endpoint]
-- **Impact**: [RCE / auth bypass / data exposure] — high-level, no exploit chain.
-- **Environment**: [lab, version], PoC remains private.
+## 📦 What’s Inside
+- Incident case studies (e.g., WannaCry, SolarWinds, Equifax, and vendor-specific campaigns)
+- MITRE ATT&CK mapping (TTPs, sub-techniques)
+- Vulnerability references (CVE/CWE)
+- CIA Triad & business impact summary
+- Defensive guidance (detections, hardening, IR notes)
+- Timelines, diagrams, and sanitized artifacts
 
-## Method (High-level)
-1) Recon surface → 2) Controlled lab reproduction → 3) Root cause analysis.  
-*No step-by-step exploit or payloads in public.*
+## 🎯 Goals
+- Provide a learning hub for students, analysts, DFIR practitioners, and researchers
+- Showcase concise, responsible, and reproducible security analysis
+- Emphasize defender value: detection logic, hypotheses, and mitigations
 
-## Indicators & Detection (Safe to share)
-- Log patterns (sanitized)
-- Hypothesis for Sigma/KQL (pseudocode, not weaponizable)
-
-## Mitigation & Remediation
-- Hardening: [config changes], [WAF rules], [least privilege]
-
-## Timeline
-- [YYYY-MM-DD] Discovery (lab)
-- [YYYY-MM-DD] Responsible disclosure sent
-- [YYYY-MM-DD] Vendor acknowledgement / patch
-
-## Credits & Ethics
-- Research by @vickern-tan.  
-- This repo omits exploit code and sensitive artifacts to prevent abuse.
-
-
+## 🗂 Repository Layout
+/  
+├─ README.md  
+├─ LICENSE  
+├─ .gitignore
+├─ cases/  
+│ └─ <CS001>/  
+│ ├─ report.md # main write-up (sanitized, defender-centric)  
+│ ├─ timeline.md # key dates (discovery → disclosure → patch)  
+│ ├─ detections.md # hypotheses, hunting ideas, IOCs (safe)  
+│ ├─ references.md # CVE/CWE, advisories, research links  
+│ └─ attachments/ # images used in the case docs  
+│ └─ POC-Decoded-Strings.png 
+├─ index.md  
