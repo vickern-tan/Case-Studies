@@ -18,7 +18,7 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 - **CVE-2025-53770** — variant related to 49704 (fuzzing-derived)  
 - **CVE-2025-53771** — variant related to 49706
 
-> Together, these elevated the risk of unauthenticated compromise on exposed SharePoint instances. (Links to vendor/NVD advisories in **References**.)
+> Together, these elevated the risk of unauthenticated compromise on exposed SharePoint instances. (Links to vendor/NVD advisories in **[[#References]]**.)
 
 **Assumptions:** Evidence is from a lab/controlled replication. Sensitive paths and network indicators are redacted; no runnable exploit code is provided.
 
@@ -127,15 +127,15 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 
 ---
 
-## 8) References
+## References
 
-- NVD: CVE-2025-49706 — Authentication bypass (link to advisory)  
-- NVD: CVE-2025-49704 — Arbitrary file write → RCE (link to advisory)  
-- NVD: CVE-2025-53770 — Variant related to file write (link to advisory)  
-- CVE-2025-53771 — Variant related to auth bypass (tracking)  
+- NVD: [CVE-2025-49706](https://nvd.nist.gov/vuln/detail/CVE-2025-49706 "https://nvd.nist.gov/vuln/detail/CVE-2025-49706")— Authentication bypass
+- NVD: [CVE-2025-49704](https://nvd.nist.gov/vuln/detail/CVE-2025-49704 "https://nvd.nist.gov/vuln/detail/CVE-2025-49704") — Arbitrary file write → RCE
+- NVD: [CVE-2025-53770](https://nvd.nist.gov/vuln/detail/CVE-2025-53770 "https://nvd.nist.gov/vuln/detail/CVE-2025-53770") — Variant related to file write
+- CVE-2025-53771 — Variant related to auth bypass
 - MITRE ATT&CK: https://attack.mitre.org/
+- Article Ref: [Varonis Threat Labs | ToolShell | SharePoint]([ToolShell: A SharePoint RCE chain actively exploited](https://www.varonis.com/blog/toolshell-sharepoint-rce#detection-and-mitigation) "[ToolShell: A SharePoint RCE chain actively exploited](https://www.varonis.com/blog/toolshell-sharepoint-rce#detection-and-mitigation)")
 
-> Replace with exact vendor/NVD links present in your internal notes.
 
 ---
 
