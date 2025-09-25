@@ -1,2 +1,4 @@
-
+.obsidian/
+.DS_Store
+Thumbs.db
 /SharePoint ToolShell Exploitation Attempt/CS001 - Overview & Detection Analysis.md
