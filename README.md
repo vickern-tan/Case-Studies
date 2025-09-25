@@ -3,7 +3,7 @@
 Curated, research-grade write-ups of real-world cyber incidents. Each case distills what happened, how it worked (at a high level), why it mattered to the business, and how defenders can detect and respond—mapped to MITRE ATT&CK.
 
 ## 📦 What’s Inside
-- Incident case studies (e.g., WannaCry, SolarWinds, Equifax, and vendor-specific campaigns)
+- Incident case studies
 - MITRE ATT&CK mapping (TTPs, sub-techniques)
 - Vulnerability references (CVE/CWE)
 - CIA Triad & business impact summary
