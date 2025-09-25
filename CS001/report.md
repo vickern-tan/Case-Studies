@@ -54,7 +54,7 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
   - A `0.css` drop in `App_GlobalResources\` (likely write test/marker)
 
 
-#### **Screenshot: **
+#### **Screenshot:**
 ![](Attachments/POC-Decoded-Strings.png)
 
 *Figure — Decoded Command Lines*
