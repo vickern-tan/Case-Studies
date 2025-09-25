@@ -9,6 +9,16 @@
 
 ---
 
+## Table of Contents
+```toc
+style: bullet
+min_depth: 1
+max_depth: 3
+```
+
+
+
+---
 ## 1) Overview
 
 A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
