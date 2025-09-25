@@ -1,4 +1,4 @@
-# Case Study 001 — SharePoint “ToolShell” Exploitation Attempt (Sanitized)
+# Case Study 001 — SharePoint “ToolShell” Exploitation Attempt
 
 > **TL;DR**: Suspected post-exploitation activity on a SharePoint host: `w3wp.exe` spawning PowerShell/`cmd.exe`, host recon + cleartext exfil, staged binaries, and a probable ASPX web shell drop into **LAYOUTS**. No sensitive data or PoC code included.
 
@@ -24,7 +24,7 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 
 ---
 
-## 2) Evidence & Observables (sanitized)
+## 2) Evidence & Observables
 
 **Telemetry sources**
 - XDR alert (High)
@@ -43,7 +43,7 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 
 ---
 
-## 3) ATT&CK Mapping (high-level)
+## 3) ATT&CK Mapping
 
 - **Initial Access**: T1190 Exploit Public-Facing App (SharePoint)  
 - **Execution**: T1059.001 PowerShell; T1059 Cmd  
@@ -57,7 +57,7 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 
 ---
 
-## 4) Detection Opportunities (defender-centric, safe)
+## 4) Detection Opportunities
 
 > Use these as **hypotheses** or starting points—adapt to your SIEM/EDR telemetry model.
 
@@ -109,7 +109,7 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 
 ---
 
-## 6) Timeline (example)
+## 6) Timeline
 
 - **2025-07-22** — Suspicious telemetry detected (XDR)  
 - **2025-07-24** — Lab replication & artifact review  
@@ -118,7 +118,7 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 
 ---
 
-## 7) Indicators (redacted placeholders)
+## 7) Indicators
 
 - **Paths**: `...\LAYOUTS\spinstall0.aspx`, `...\App_GlobalResources\0.css`  
 - **Processes**: `w3wp.exe` → `powershell.exe` / `cmd.exe`  
@@ -134,7 +134,7 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 - NVD: [CVE-2025-53770](https://nvd.nist.gov/vuln/detail/CVE-2025-53770 "https://nvd.nist.gov/vuln/detail/CVE-2025-53770") — Variant related to file write
 - CVE-2025-53771 — Variant related to auth bypass
 - MITRE ATT&CK: https://attack.mitre.org/
-- Article Ref: [Varonis Threat Labs | ToolShell | SharePoint]([ToolShell: A SharePoint RCE chain actively exploited](https://www.varonis.com/blog/toolshell-sharepoint-rce#detection-and-mitigation) "[ToolShell: A SharePoint RCE chain actively exploited](https://www.varonis.com/blog/toolshell-sharepoint-rce#detection-and-mitigation)")
+- Article Ref: [ToolShell: A SharePoint RCE chain actively exploited](https://www.varonis.com/blog/toolshell-sharepoint-rce#detection-and-mitigation)
 
 
 ---
