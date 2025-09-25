@@ -108,7 +108,7 @@ notes: >
 
 ## 5) Screenshot
 
-![](attachments/stellar-cyber-ath-rule.png)
+![](Attachments/stellar-cyber-ath-rule.png)
 *Figure — ATH rule builder targeting POST + ToolPane and SharePoint edit ops.*
 
 
