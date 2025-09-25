@@ -64,7 +64,7 @@ cmd.exe /c powershell -EncodedCommand <BASE64>   # decodes and writes spinstall0
  ```
 
 #### Encoded Command:
-<img width="587" height="783" alt="image" src="https://github.com/user-attachments/assets/c75fa5d5-98ad-452d-b7f5-bdb4748ae64d" />
+![](attachments/POC-Decoded-Strings.png)
 
 
 ## Analysis Summary
