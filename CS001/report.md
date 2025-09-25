@@ -9,17 +9,26 @@
 
 ---
 
-## Table of Contents
-```toc
-style: bullet
-min_depth: 1
-max_depth: 3
-```
+# Table of Contents
+
+1. [Overview](#overview)
+2. [Evidence & Observables](#evidence--observables)
+		 - [**Screenshot**](#screenshot)
+3. [ATT&CK Mapping (High-level)](#attck-mapping-high-level)
+4. [Detection Opportunities](#detection-opportunities)
+5. [Response & Remediation](#response--remediation)
+6. [Timeline](#timeline)
+7. [Indicators](#indicators)
+8. [References](#references)
+9. [Appendix A — Decoded Command](#appendix-a--decoded-command)
+10. [Ethics & Disclosure](#ethics--disclosure)
+
+
 
 
 
 ---
-## 1) Overview
+## Overview
 
 A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 
@@ -31,7 +40,7 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 
 ---
 
-## 2) Evidence & Observables
+## Evidence & Observables
 
 **Telemetry sources**
 - XDR alert (High)
@@ -53,7 +62,7 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 
 ---
 
-## 3) ATT&CK Mapping (High-level)
+## ATT&CK Mapping (High-level)
 
 - **Initial Access**: T1190 Exploit Public-Facing App (SharePoint)  
 - **Execution**: T1059.001 PowerShell; T1059 Cmd  
@@ -66,7 +75,7 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 
 ---
 
-## 4) Detection Opportunities
+## Detection Opportunities
 
 > Use these as **hypotheses** or starting points—adapt to your SIEM/EDR telemetry model.
 
@@ -93,7 +102,7 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 
 ---
 
-## 5) Response & Remediation
+## Response & Remediation
 
 **Immediate**
 - Quarantine or EDR isolate the affected host (maintenance window permitting)
@@ -118,7 +127,7 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 
 ---
 
-## 6) Timeline
+## Timeline
 
 - **2025-07-22** — Suspicious telemetry detected (XDR)  
 - **2025-07-24** — Lab replication & artifact review  
@@ -127,7 +136,7 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 
 ---
 
-## 7) Indicators
+## Indicators
 
 - **Paths**: `...\LAYOUTS\spinstall0.aspx`, `...\App_GlobalResources\0.css`  
 - **Processes**: `w3wp.exe` → `powershell.exe` / `cmd.exe`  
@@ -158,6 +167,6 @@ A chain of 2025 SharePoint issues dubbed “ToolShell” was publicly tracked:
 
 ---
 
-### Ethics & Disclosure
+## Ethics & Disclosure
 
 This case study omits exploit code and sensitive identifiers and was prepared in line with responsible disclosure practices. The intent is to help defenders recognize and mitigate similar activity, not to enable misuse.
